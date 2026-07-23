@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A.M.D. Deshan — Deshu Graphics Kandy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --highlight-green: #39ff14;
+            --neon-red: #ff073a;
+            --purple: #bc13fe;
+            --gold: #c9a96e;
+            --bg: #060606;
+            --surface: #0a0a0a;
+            --surface-light: #111111;
+            --text: #e8e8e8;
+            --text-dim: #666666;
+            --border: rgba(255,255,255,0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, var(--neon-blue), var(--purple)); border-radius: 3px; }
+
+        /* ===== NOISE OVERLAY ===== */
+        .noise {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ===== CURSOR ===== */
+        .cursor-glow {
+            position: fixed; width: 300px; height: 300px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,243,255,0.04) 0%, transparent 70%);
+            pointer-events: none; z-index: 1; transform: translate(-50%,-50%);
+            transition: opacity 0.3s;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 24px 60px; display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, rgba(6,6,6,0.95), transparent);
+            backdrop-filter: blur(20px);
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600;
+            letter-spacing: 3px; text-transform: uppercase; color: var(--text);
+        }
+
+        .nav-brand span { color: var(--neon-blue); font-weight: 700; }
+
+        .nav-links {
+            display: flex; gap: 40px; list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.75rem; letter-spacing: 2.5px; text-transform: uppercase;
+            color: var(--text-dim); text-decoration: none; font-weight: 500;
+            position: relative; transition: all 0.4s ease; padding-bottom: 4px;
+        }
+
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 0; height: 1px; background: var(--neon-blue);
+            transition: width 0.4s ease; box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .nav-links a:hover { color: var(--neon-blue); }
+        .nav-links a:hover::after { width: 100%; }
+
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+        .hamburger span { width: 22px; height: 1px; background: var(--text); transition: all 0.3s; }
+
+        /* ===== SECTIONS ===== */
+        section { position: relative; }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            text-align: center; position: relative; padding: 120px 40px 80px;
+        }
+
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url('https://cdn.oreateai.com/aiimage/upload/11ba9026e19fdeda56e3d5f5/c14705d37855ebd2bf471f7c869c911a.jpeg');
+            background-size: cover;
+            background-position: center 30%;
+            opacity: 0.22;
+            filter: grayscale(100%) contrast(1.15) brightness(0.65);
+            mask-image: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 75%);
+            -webkit-mask-image: radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 75%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content { max-width: 800px; }
+
+        .hero-label {
+            font-size: 0.7rem; letter-spacing: 6px; text-transform: uppercase;
+            color: var(--text-dim); margin-bottom: 30px; display: block;
+        }
+
+        .hero-name {
+            font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 300; line-height: 1.1; margin-bottom: 20px;
+        }
+
+        .hero-name .dot {
+            color: var(--neon-blue); font-weight: 600;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; text-shadow: 0 0 20px var(--neon-blue); }
+            50% { opacity: 0.5; text-shadow: 0 0 40px var(--neon-blue); }
+        }
+
+        .hero-tagline {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.6rem;
+            font-weight: 300; font-style: italic; color: var(--text-dim);
+            margin-bottom: 50px;
+        }
+
+        .hero-tagline .neon { color: var(--neon-blue); font-weight: 400; }
+        .hero-tagline .green { color: var(--highlight-green); font-weight: 400; }
+
+        .hero-cta {
+            display: inline-flex; align-items: center; gap: 12px;
+            padding: 14px 36px; border: 1px solid rgba(0,243,255,0.3);
+            color: var(--neon-blue); text-decoration: none; font-size: 0.75rem;
+            letter-spacing: 3px; text-transform: uppercase; font-weight: 500;
+            transition: all 0.4s ease; position: relative; overflow: hidden;
+        }
+
+        .hero-cta::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(45deg, var(--neon-blue), var(--purple));
+            opacity: 0; transition: opacity 0.4s; z-index: -1;
+        }
+
+        .hero-cta:hover { color: var(--bg); border-color: transparent; }
+        .hero-cta:hover::before { opacity: 1; }
+
+        .scroll-indicator {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        .scroll-line {
+            width: 1px; height: 40px; background: linear-gradient(to bottom, var(--neon-blue), transparent);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* ===== ABOUT ===== */
+        .about-section { padding: 140px 60px; max-width: 1200px; margin: 0 auto; }
+
+        .section-header {
+            text-align: center; margin-bottom: 80px;
+        }
+
+        .section-header h2 {
+            font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 300; margin-bottom: 15px;
+        }
+
+        .section-header .line {
+            width: 60px; height: 1px; background: linear-gradient(90deg, var(--neon-blue), var(--purple));
+            margin: 0 auto; box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .about-grid {
+            display: grid; grid-template-columns: 300px 1fr; gap: 80px; align-items: start;
+        }
+
+        .about-photo {
+            position: sticky; top: 120px;
+        }
+
+        .photo-frame {
+            width: 280px; height: 350px; position: relative;
+            border: 1px solid var(--border);
+        }
+
+        .photo-frame img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: grayscale(30%) contrast(1.1);
+            transition: all 0.6s ease;
+        }
+
+        .photo-frame:hover img { filter: grayscale(0%) contrast(1); }
+
+        .photo-frame::before {
+            content: ''; position: absolute; top: -15px; left: -15px;
+            width: 60px; height: 60px;
+            border-top: 2px solid var(--neon-blue); border-left: 2px solid var(--neon-blue);
+            opacity: 0.6;
+        }
+
+        .photo-frame::after {
+            content: ''; position: absolute; bottom: -15px; right: -15px;
+            width: 60px; height: 60px;
+            border-bottom: 2px solid var(--purple); border-right: 2px solid var(--purple);
+            opacity: 0.6;
+        }
+
+        .photo-caption {
+            margin-top: 20px; text-align: center;
+            font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        .about-text h3 {
+            font-family: 'Cormorant Garamond', serif; font-size: 2rem;
+            font-weight: 400; margin-bottom: 30px; line-height: 1.4;
+        }
+
+        .about-text h3 .highlight { color: var(--neon-blue); font-weight: 600; }
+
+        .about-text p {
+            color: var(--text-dim); margin-bottom: 24px; font-size: 0.95rem;
+        }
+
+        .about-text p strong { color: var(--text); font-weight: 500; }
+        /* ===== ABOUT ARTISTIC OVERLAY ===== */
+        .about-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-bg-overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 55%;
+            height: 100%;
+            background-image: url('https://cdn.oreateai.com/aiimage/upload/11ba9026e19fdeda56e3d5f5/c14705d37855ebd2bf471f7c869c911a.jpeg');
+            background-size: cover;
+            background-position: center 20%;
+            opacity: 0.12;
+            filter: grayscale(100%) contrast(1.2) brightness(0.8);
+            mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
+            pointer-events: none;
+            z-index: 0;
+            mix-blend-mode: luminosity;
+        }
+
+        .about-section > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .about-bg-overlay {
+                width: 100%;
+                opacity: 0.07;
+                mask-image: linear-gradient(to top, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 70%);
+                -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 70%);
+            }
+        }
+
+
+        .philosophy-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
+            margin-top: 50px;
+        }
+
+        .philosophy-card {
+            padding: 30px; border: 1px solid var(--border);
+            background: var(--surface); transition: all 0.4s ease;
+            position: relative; overflow: hidden;
+        }
+
+        .philosophy-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--purple));
+            transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+        }
+
+        .philosophy-card:hover::before { transform: scaleX(1); }
+        .philosophy-card:hover { border-color: rgba(0,243,255,0.15); transform: translateY(-5px); }
+
+        .philosophy-card h4 {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.3rem;
+            font-weight: 600; margin-bottom: 15px; color: var(--text);
+        }
+
+        .philosophy-card p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+
+        .pledge-box {
+            margin-top: 50px; padding: 40px;
+            border-left: 2px solid var(--highlight-green);
+            background: linear-gradient(90deg, rgba(57,255,20,0.03), transparent);
+        }
+
+        .pledge-box p {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.2rem;
+            font-style: italic; color: var(--text); line-height: 1.8; margin: 0;
+        }
+
+        .pledge-box .author {
+            margin-top: 20px; font-family: 'Inter', sans-serif;
+            font-size: 0.8rem; font-style: normal; color: var(--text-dim);
+            letter-spacing: 2px; text-transform: uppercase;
+        }
+
+        /* ===== SKILLS ===== */
+        .skills-section { padding: 140px 60px; background: var(--surface); }
+
+        .skills-container { max-width: 900px; margin: 0 auto; }
+
+        .skills-grid {
+            display: grid; gap: 28px;
+        }
+
+        .skill-row {
+            display: grid; grid-template-columns: 240px 1fr 60px; align-items: center; gap: 30px;
+            padding: 24px 30px; background: var(--bg); border: 1px solid var(--border);
+            transition: all 0.4s ease;
+        }
+
+        .skill-row:hover { border-color: rgba(0,243,255,0.2); }
+
+        .skill-info { display: flex; align-items: center; gap: 15px; }
+
+        .skill-icon {
+            width: 42px; height: 42px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; background: rgba(0,243,255,0.06);
+            color: var(--neon-blue); border: 1px solid rgba(0,243,255,0.1);
+        }
+
+        .skill-name { font-size: 0.9rem; font-weight: 500; letter-spacing: 0.5px; }
+
+        .skill-track {
+            height: 4px; background: rgba(255,255,255,0.04); border-radius: 2px;
+            overflow: hidden; position: relative;
+        }
+
+        .skill-fill {
+            height: 100%; border-radius: 2px; width: 0;
+            background: linear-gradient(90deg, var(--neon-blue), var(--purple));
+            transition: width 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+        }
+
+        .skill-fill::after {
+            content: ''; position: absolute; right: 0; top: -3px;
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .skill-pct {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.3rem;
+            font-weight: 600; text-align: right;
+        }
+
+        .skill-pct.high { color: var(--highlight-green); }
+        .skill-pct.mid { color: var(--neon-blue); }
+        .skill-pct.low { color: var(--purple); }
+
+
+        /* ===== HERO B&W BACKGROUND OVERLAY ===== */
+        .hero {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== SECTION TEXTURE OVERLAYS ===== */
+        .skills-section, .contact-section {
+            position: relative;
+        }
+        .skills-section::before, .contact-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+        .skills-container, .contact-grid { position: relative; z-index: 1; }
+
+        /* ===== WORK SECTION - MATCH EXISTING WORK.HTML STYLE ===== */
+        .work-section {
+            padding: 120px 60px 140px;
+            position: relative;
+        }
+        .work-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 1px; height: 80px;
+            background: linear-gradient(to bottom, transparent, var(--neon-blue), transparent);
+        }
+
+        /* Gallery Header */
+        .work-gallery-header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding-top: 40px;
+        }
+        .work-gallery-header .section-tag {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0,243,255,0.2);
+            margin-bottom: 16px;
+            display: inline-block;
+            padding: 8px 20px;
+            border: 1px solid rgba(0,243,255,0.2);
+            border-radius: 50px;
+        }
+        .work-gallery-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+        .work-gallery-header h2 .highlight {
+            font-weight: 700;
+            color: var(--highlight-green);
+            text-shadow: 0 0 20px rgba(57,255,20,0.15);
+        }
+        .work-gallery-header p {
+            font-size: 1rem;
+            color: var(--text-dim);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* Portfolio Header */
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .portfolio-header .section-tag {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0,243,255,0.2);
+            margin-bottom: 16px;
+            display: inline-block;
+            padding: 8px 20px;
+            border: 1px solid rgba(0,243,255,0.2);
+            border-radius: 50px;
+        }
+        .portfolio-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 300;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+        .portfolio-header h2 .highlight {
+            font-weight: 700;
+            color: var(--highlight-green);
+            text-shadow: 0 0 20px rgba(57,255,20,0.15);
+        }
+        .portfolio-header p {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* Work Grid - matching existing site */
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .work-item {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: linear-gradient(135deg, rgba(10,10,10,0.95), rgba(15,15,15,0.95));
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            aspect-ratio: 4/3;
+        }
+
+        .work-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--highlight-green));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+            box-shadow: 0 0 20px rgba(0,243,255,0.2);
+            z-index: 3;
+        }
+
+        .work-item:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0,243,255,0.2);
+            box-shadow: 0 20px 60px rgba(0,243,255,0.08), 0 0 40px rgba(57,255,20,0.04);
+        }
+
+        .work-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .work-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            filter: grayscale(20%);
+        }
+
+        .work-item:hover img {
+            transform: scale(1.08);
+            filter: grayscale(0%);
+        }
+
+        .work-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(6,6,6,0.95) 0%, rgba(6,6,6,0.5) 40%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 2;
+        }
+
+        .work-item:hover .work-overlay {
+            opacity: 1;
+        }
+
+        .work-cat {
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--neon-blue);
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(0,243,255,0.2);
+        }
+
+        .work-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .work-desc {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .work-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .work-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .work-meta i {
+            color: var(--highlight-green);
+            font-size: 0.7rem;
+        }
+
+        /* ===== WORK / PORTFOLIO ===== */
+        .work-section { padding: 140px 60px; }
+
+        .work-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px; max-width: 1400px; margin: 0 auto;
+        }
+
+        .work-item {
+            position: relative; aspect-ratio: 4/3; overflow: hidden;
+            cursor: pointer; border: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .work-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            filter: grayscale(20%);
+        }
+
+        .work-item:hover img {
+            transform: scale(1.08); filter: grayscale(0%);
+        }
+
+        .work-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(6,6,6,0.95) 0%, rgba(6,6,6,0.4) 50%, transparent 100%);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 30px; opacity: 0; transition: all 0.4s ease;
+        }
+
+        .work-item:hover .work-overlay { opacity: 1; }
+
+        .work-cat {
+            font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--neon-blue); margin-bottom: 8px;
+        }
+
+        .work-title {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.4rem;
+            font-weight: 600; margin-bottom: 10px;
+        }
+
+        .work-meta {
+            display: flex; gap: 20px; font-size: 0.75rem; color: var(--text-dim);
+        }
+
+        .work-meta span { display: flex; align-items: center; gap: 6px; }
+
+        .work-meta i { color: var(--highlight-green); font-size: 0.7rem; }
+
+        /* Lightbox */
+        .lightbox {
+            display: none; position: fixed; inset: 0; z-index: 2000;
+            background: rgba(6,6,6,0.97); backdrop-filter: blur(20px);
+            justify-content: center; align-items: center; padding: 60px;
+        }
+
+        .lightbox.active { display: flex; }
+
+        .lightbox-close {
+            position: absolute; top: 30px; right: 40px; font-size: 2rem;
+            color: var(--text-dim); cursor: pointer; transition: color 0.3s;
+            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border); border-radius: 50%;
+        }
+
+        .lightbox-close:hover { color: var(--neon-red); border-color: var(--neon-red); }
+
+        .lightbox-content {
+            display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px;
+            max-width: 1200px; width: 100%; align-items: center;
+        }
+
+        .lightbox-img-wrap {
+            border: 1px solid var(--border); overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .lightbox-img-wrap img { width: 100%; height: auto; display: block; }
+
+        .lightbox-info h3 {
+            font-family: 'Cormorant Garamond', serif; font-size: 2rem;
+            font-weight: 600; margin-bottom: 10px;
+        }
+
+        .lightbox-info .lb-cat {
+            display: inline-block; padding: 6px 16px;
+            background: rgba(0,243,255,0.08); border: 1px solid rgba(0,243,255,0.15);
+            color: var(--neon-blue); font-size: 0.7rem; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 25px;
+        }
+
+        .lightbox-info p {
+            color: var(--text-dim); font-size: 0.9rem; line-height: 1.8; margin-bottom: 25px;
+        }
+
+        .lightbox-stats {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            padding-top: 25px; border-top: 1px solid var(--border);
+        }
+
+        .lb-stat h5 {
+            font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--text-dim); margin-bottom: 8px; font-weight: 500;
+        }
+
+        .lb-stat .stat-val {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600;
+        }
+
+        .lb-stat .stat-val.green { color: var(--highlight-green); }
+        .lb-stat .stat-val.blue { color: var(--neon-blue); }
+
+        /* ===== CONTACT ===== */
+        .contact-section { padding: 140px 60px 80px; background: var(--surface); }
+
+        .contact-grid {
+            display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 80px;
+            max-width: 1200px; margin: 0 auto; align-items: start;
+        }
+
+        .contact-info h3 {
+            font-family: 'Cormorant Garamond', serif; font-size: 2rem;
+            font-weight: 400; margin-bottom: 10px;
+        }
+
+        .contact-info .sub {
+            color: var(--text-dim); font-size: 0.9rem; margin-bottom: 50px;
+        }
+
+        .info-item {
+            display: flex; align-items: flex-start; gap: 20px;
+            margin-bottom: 30px; padding-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-item:last-of-type { border-bottom: none; }
+
+        .info-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,243,255,0.05); border: 1px solid rgba(0,243,255,0.1);
+            color: var(--neon-blue); font-size: 1rem; flex-shrink: 0;
+        }
+
+        .info-detail h5 {
+            font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--text-dim); margin-bottom: 6px; font-weight: 500;
+        }
+
+        .info-detail p, .info-detail a {
+            font-size: 1rem; color: var(--text); text-decoration: none;
+            font-weight: 500; transition: color 0.3s;
+        }
+
+        .info-detail a:hover { color: var(--neon-blue); }
+
+        .social-row {
+            display: flex; gap: 12px; margin-top: 10px;
+        }
+
+        .social-row a {
+            width: 44px; height: 44px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--bg); border: 1px solid var(--border);
+            color: var(--text-dim); font-size: 1rem; text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-row a:hover {
+            background: var(--neon-blue); color: var(--bg); border-color: var(--neon-blue);
+            transform: translateY(-3px);
+        }
+
+        /* Order Form */
+        .order-form {
+            background: var(--bg); border: 1px solid var(--border); padding: 50px;
+            position: relative;
+        }
+
+        .order-form::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--purple), var(--neon-red), var(--highlight-green));
+        }
+
+        .order-form h3 {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.6rem;
+            font-weight: 600; margin-bottom: 8px;
+        }
+
+        .order-form .form-sub {
+            color: var(--text-dim); font-size: 0.85rem; margin-bottom: 40px;
+        }
+
+        .form-group { margin-bottom: 24px; }
+
+        .form-group label {
+            display: block; font-size: 0.7rem; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .form-group label .req { color: var(--neon-red); }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%; padding: 14px 18px; background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border); border-radius: 0;
+            color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none; border-color: var(--neon-blue);
+            background: rgba(0,243,255,0.02);
+            box-shadow: 0 0 20px rgba(0,243,255,0.05);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: rgba(255,255,255,0.2); }
+
+        .form-group select {
+            cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23666666' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 18px center;
+        }
+
+        .form-group select option { background: var(--bg); color: var(--text); }
+
+        .form-group textarea { resize: vertical; min-height: 100px; }
+
+        .submit-btn {
+            width: 100%; padding: 16px; background: transparent;
+            border: 1px solid var(--neon-blue); color: var(--neon-blue);
+            font-family: 'Inter', sans-serif; font-size: 0.8rem;
+            letter-spacing: 3px; text-transform: uppercase; font-weight: 600;
+            cursor: pointer; transition: all 0.4s ease; position: relative; overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(45deg, var(--neon-blue), var(--purple));
+            opacity: 0; transition: opacity 0.4s; z-index: -1;
+        }
+
+        .submit-btn:hover { color: var(--bg); }
+        .submit-btn:hover::before { opacity: 1; }
+
+        .submit-btn i { margin-right: 8px; }
+
+        /* Notification */
+        .notification {
+            position: fixed; top: 100px; right: -500px; z-index: 3000;
+            background: var(--surface); border: 1px solid var(--highlight-green);
+            padding: 25px 35px; display: flex; align-items: center; gap: 18px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: right 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .notification.show { right: 40px; }
+
+        .notif-icon {
+            width: 46px; height: 46px; border-radius: 50%;
+            background: rgba(57,255,20,0.08); border: 1px solid rgba(57,255,20,0.2);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--highlight-green); font-size: 1.1rem;
+        }
+
+        .notif-text h4 {
+            font-size: 0.95rem; font-weight: 600; color: var(--highlight-green);
+            margin-bottom: 4px;
+        }
+
+        .notif-text p { font-size: 0.8rem; color: var(--text-dim); }
+
+        /* Footer */
+        footer {
+            text-align: center; padding: 50px 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        footer p {
+            font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        footer .name { color: var(--neon-blue); font-weight: 500; }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-up {
+            opacity: 0; transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .about-grid { grid-template-columns: 1fr; gap: 50px; }
+            .about-photo { position: relative; top: 0; display: flex; justify-content: center; }
+            .contact-grid { grid-template-columns: 1fr; gap: 60px; }
+            .lightbox-content { grid-template-columns: 1fr; gap: 30px; }
+            .philosophy-grid { grid-template-columns: 1fr; }
+            .skill-row { grid-template-columns: 1fr; gap: 15px; }
+            .work-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 20px 25px; }
+            .nav-links {
+                position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+                background: var(--bg); flex-direction: column; justify-content: center;
+                align-items: center; gap: 40px; transition: right 0.5s ease;
+            }
+            .nav-links.active { right: 0; }
+            .nav-links a { font-size: 1rem; }
+            .hamburger { display: flex; }
+            .hero { padding: 100px 25px 60px; }
+            .about-section, .skills-section, .work-section, .contact-section { padding: 80px 25px; }
+            .work-grid { grid-template-columns: 1fr; }
+            .order-form { padding: 30px 25px; }
+            .photo-frame { width: 240px; height: 300px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-brand">Deshu <span>Graphics</span></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#work">My Work</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <span class="hero-label fade-up">Graphic Designer — Kandy, Sri Lanka</span>
+            <h1 class="hero-name fade-up delay-1">
+                A.M.D<span class="dot">.</span><br>DESHAN
+            </h1>
+            <p class="hero-tagline fade-up delay-2">
+                Crafting Visuals in <span class="neon">Neon</span> & <span class="green">Shadow</span>
+            </p>
+            <a href="#about" class="hero-cta fade-up delay-3">
+                Explore My Work <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        <div class="scroll-indicator fade-up delay-4">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="about-section" id="about">
+        <div class="about-bg-overlay"></div>
+        <div class="section-header fade-up">
+            <h2>The Designer</h2>
+            <div class="line"></div>
+        </div>
+        <div class="about-grid">
+            <div class="about-photo fade-up">
+                <div class="photo-frame">
+                    <img src="https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image/profile.png" 
+                         alt="A.M.D Deshan - Deshu Graphics Kandy" id="profileImg">
+                </div>
+                <p class="photo-caption">A.M.D. Deshan — Kandy</p>
+            </div>
+            <div class="about-text">
+                <h3 class="fade-up">Deep Thinker<span class="dot">.</span><br>Perfectionist<span class="dot">.</span></h3>
+                <p class="fade-up">
+                    I am <strong>A.M.D Deshan</strong>, a 23-year-old graphic designer based in the beautiful city of 
+                    <strong>Kandy, Sri Lanka</strong>. I don't rush. I analyze, I craft, and I deliver only when every pixel 
+                    aligns with the vision.
+                </p>
+                <p class="fade-up">
+                    I specialize in managing <strong>color palettes</strong>, <strong>typography</strong>, <strong>layout composition</strong>, 
+                    and understanding client requirements deeply. I analyze the <strong>target audience</strong> of every design to ensure 
+                    the output connects and converts. Though my formal experience is still growing, I am an active 
+                    <strong>freelancer</strong> serving clients across various platforms.
+                </p>
+                <p class="fade-up">
+                    When a client entrusts me with their vision, I commit wholeheartedly. No matter how long it takes, 
+                    I am bound to deliver <strong style="color:var(--highlight-green)">98% client satisfaction</strong> — 
+                    because for me, money comes second. What truly matters is elevating my craft and seeing my clients' 
+                    visions come to life.
+                </p>
+
+                <div class="philosophy-grid">
+                    <div class="philosophy-card fade-up">
+                        <h4>Patience Over Speed</h4>
+                        <p>Great design takes time. Every project is a journey of discovery, analysis, and refinement. I never rush creativity.</p>
+                    </div>
+                    <div class="philosophy-card fade-up delay-1">
+                        <h4>Client-First Focus</h4>
+                        <p>My goal is not money — it is your satisfaction. I build relationships through trust and designs that exceed expectations.</p>
+                    </div>
+                    <div class="philosophy-card fade-up delay-2">
+                        <h4>Uncompromising Quality</h4>
+                        <p>I never accept work I cannot deliver perfectly. Every design is a reflection of my name and my promise.</p>
+                    </div>
+                </div>
+
+                <div class="pledge-box fade-up">
+                    <p>"I am based in Kandy, Sri Lanka. For over a year, I have served clients as a freelance graphic designer with one unwavering commitment: perfection before delivery. I analyze every brief deeply. I question, I explore, and I craft until the design speaks the language of your brand. No shortcuts. No compromises. Only excellence."</p>
+                    <p class="author">— A.M.D. Deshan</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="skills-section" id="skills">
+        <div class="skills-container">
+            <div class="section-header fade-up">
+                <h2>Expertise</h2>
+                <div class="line"></div>
+            </div>
+            <div class="skills-grid" id="skillsGrid"></div>
+        </div>
+    </section>
+
+    <!-- My Work -->
+    <section class="work-section" id="work">
+        <!-- Gallery Hero Header -->
+        <div class="work-gallery-header fade-up">
+            <span class="section-tag">The Visual Gallery</span>
+            <h2>Designs That <span class="highlight">Speak</span></h2>
+            <p>A curated collection of creative designs spanning multiple categories and styles</p>
+        </div>
+
+        <!-- Portfolio Header -->
+        <div class="portfolio-header fade-up">
+            <span class="section-tag">Selected Works</span>
+            <h2>The <span class="highlight">Portfolio</span></h2>
+            <p>Each piece is a testament to the philosophy of patience, precision, and perfection.</p>
+        </div>
+
+        <!-- Work Grid -->
+        <div class="work-grid" id="workGrid"></div>
+    </section>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-close" id="lightboxClose"><i class="fas fa-times"></i></div>
+        <div class="lightbox-content">
+            <div class="lightbox-img-wrap">
+                <img src="" alt="" id="lbImg">
+            </div>
+            <div class="lightbox-info">
+                <span class="lb-cat" id="lbCat">Category</span>
+                <h3 id="lbTitle">Title</h3>
+                <p id="lbDesc">Description</p>
+                <div class="lightbox-stats">
+                    <div class="lb-stat">
+                        <h5>Success Rate</h5>
+                        <div class="stat-val green" id="lbRate">98%</div>
+                    </div>
+                    <div class="lb-stat">
+                        <h5>Color Palette</h5>
+                        <div class="stat-val blue" id="lbColors">Neon Blue, Purple</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <section class="contact-section" id="contact">
+        <div class="section-header fade-up">
+            <h2>Get In Touch</h2>
+            <div class="line"></div>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info fade-up">
+                <h3>Let's Create<br>Something Beautiful.</h3>
+                <p class="sub">Have a project in mind? I'd love to hear about it.</p>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-user"></i></div>
+                    <div class="info-detail">
+                        <h5>Full Name</h5>
+                        <p>A.M.D DESHAN</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="info-detail">
+                        <h5>Age</h5>
+                        <p>23 Years Old</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="info-detail">
+                        <h5>Location</h5>
+                        <p>Kandy, Sri Lanka</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-phone"></i></div>
+                    <div class="info-detail">
+                        <h5>Phone</h5>
+                        <a href="tel:+94741895740">074 189 5740</a>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                    <div class="info-detail">
+                        <h5>Email</h5>
+                        <a href="mailto:deshugraphics@gmail.com">deshugraphics@gmail.com</a>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon"><i class="fab fa-facebook-f"></i></div>
+                    <div class="info-detail">
+                        <h5>Social</h5>
+                        <div class="social-row">
+                            <a href="https://facebook.com/Deshugraphics" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://wa.me/94741895740" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                            <a href="mailto:deshugraphics@gmail.com"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-form fade-up delay-1">
+                <h3>Place Your Order</h3>
+                <p class="form-sub">Fill in the details and I'll get back to you via WhatsApp immediately.</p>
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label>Your Name <span class="req">*</span></label>
+                        <input type="text" id="cName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Company Name <span class="req">*</span></label>
+                        <input type="text" id="cCompany" placeholder="Your company / brand name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>What does your company do? <span class="req">*</span></label>
+                        <input type="text" id="cType" placeholder="Describe your business or services" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address <span class="req">*</span></label>
+                        <input type="email" id="cEmail" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Choose Design Category <span class="req">*</span></label>
+                        <select id="cCategory" required>
+                            <option value="">Select category...</option>
+                            <option value="Logo Design">Logo Design</option>
+                            <option value="Social Media Post">Social Media Post</option>
+                            <option value="Thumbnail">Thumbnail</option>
+                            <option value="Photo Restoration">Photo Restoration</option>
+                            <option value="Wedding Album">Wedding Album</option>
+                            <option value="Wedding Card">Wedding Card</option>
+                            <option value="Thank You Card">Thank You Card</option>
+                            <option value="Flyer">Flyer</option>
+                            <option value="Food Design">Food Design</option>
+                            <option value="Advertising">Advertising</option>
+                            <option value="Music Post">Music Post</option>
+                            <option value="Full Branding">Full Branding</option>
+                            <option value="Retouching & Editing">Retouching & Editing</option>
+                            <option value="Portfolio Making">Portfolio Making</option>
+                            <option value="CV Making">CV Making</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Design Idea <span style="color:var(--text-dim);font-size:0.65rem;">(Optional)</span></label>
+                        <textarea id="cIdea" placeholder="Share your vision, style preferences, colors, or any specific requirements..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <i class="fab fa-whatsapp"></i> Send Order via WhatsApp
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notif-icon"><i class="fas fa-check"></i></div>
+        <div class="notif-text">
+            <h4>Order Sent Successfully!</h4>
+            <p>Opening WhatsApp to complete your order...</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 <span class="name">A.M.D. Deshan</span> — Deshu Graphics Kandy. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // ===== DATA =====
+        const works = [
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image/burger%20food%20post.jpg",
+                cat: "Food Design",
+                title: "Super Delicious Burger Promo",
+                desc: "A mouthwatering double-patty burger promotional design featuring dramatic floating ingredients, sauce splashes, and bold typography. Crafted for social media engagement with 'SUPER Delicious BURGER' branding and up to 50% OFF offer highlight.",
+                rate: "94%",
+                colors: "Black, Golden Yellow, Orange"
+            },
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image/grilled%20prown%20signature%20post.jpg",
+                cat: "Food Design",
+                title: "Grilled Prawn Signature Post",
+                desc: "An elegant seafood restaurant promotional post showcasing grilled jumbo prawns against a dramatic dark background. Features 'BUY 1 GET 1 FREE' stamp, reservation details, and sophisticated typography for weekend dining appeal.",
+                rate: "92%",
+                colors: "Dark Brown, Orange, White"
+            },
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image/shoue.jpg",
+                cat: "Advertising",
+                title: "Sports Shoe Campaign",
+                desc: "High-energy product advertisement for ultralight running shoes featuring dynamic motion blur effects. Highlights key features like shock absorption, breathable fabric, and ultralight material with a futuristic cyan and navy color scheme.",
+                rate: "90%",
+                colors: "Cyan, Navy Blue, White"
+            },
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image/watch.jpg",
+                cat: "Advertising",
+                title: "Time of Elegance Watch Ad",
+                desc: "Premium timepiece advertisement combining an elegant silver watch with a stunning aerial coastal city backdrop. 'TIME OF ELEGANCE' concept with 50% offer highlight, emphasizing water resistance, scratch-proof glass, and premium metal craftsmanship.",
+                rate: "93%",
+                colors: "Teal, Silver, Grey"
+            },
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image/zenith%20coffe%20product%20cover.png",
+                cat: "Food Design",
+                title: "Zenith Coffee Brand Cover",
+                desc: "Premium organic coffee brand packaging and promotional design. Features a steaming cup of Arabica coffee, coffee plant illustrations, and scenic mountain estate imagery. 'PURE ORIGIN. PURE PASSION.' branding with 100% organic quality messaging.",
+                rate: "96%",
+                colors: "Dark Brown, Gold, Black"
+            },
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image%202/aharenna%20magazine%20cover.jpg",
+                cat: "Full Branding",
+                title: "Aharenna Magazine Cover",
+                desc: "Cinematic Sinhala magazine cover design for 'ඇහැරෙන්න' (Wake Up) Issue 01. Moody night photography with a red neon 'OPEN' sign, artistic typography in Sinhala script, and editorial layout showcasing storytelling through visual design.",
+                rate: "91%",
+                colors: "Red, Black, Dark Grey"
+            },
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image%202/biriyani%20food%20post.jpg",
+                cat: "Food Design",
+                title: "Biriyani Blaster Promo",
+                desc: "Bold biriyani promotional flyer with a dark brick wall background and high-quality chicken biriyani imagery. Features striking red and black contrast, 'BIRIYANI BLASTER' branding, offer pricing in LKR, and compelling call-to-action layout.",
+                rate: "89%",
+                colors: "Deep Red, Black, Orange"
+            },
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image%202/headset%20social%20media%20post.jpg",
+                cat: "Advertising",
+                title: "Wireless Headset Poster",
+                desc: "Modern tech product poster for Brief Wireless Headset with cool blue tones and snowflake accents. Clean layout highlighting 20h battery life, noise cancellation features, and 'Live freely with music' lifestyle branding.",
+                rate: "88%",
+                colors: "Blue, White, Silver"
+            },
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image%202/premium%20coffee%20brand%20post.jpg",
+                cat: "Food Design",
+                title: "Zenith Coffee Social Post",
+                desc: "Elegant coffee brand social media graphic featuring a coffee bag, splashing cup, and scattered beans. Black and gold luxury aesthetic with 100% organic messaging, order button, and integrated social media handles for digital marketing.",
+                rate: "95%",
+                colors: "Black, Gold, Warm Brown"
+            },
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image%202/skincare%20media%20post.jpg",
+                cat: "Advertising",
+                title: "Luminous Elixir Skincare",
+                desc: "Sophisticated beauty product advertisement for Luminous Elixir anti-aging serum. Soft pink and white aesthetic with elegant pedestal display, model imagery, and benefit highlights including deep hydration and 100% organic formula.",
+                rate: "90%",
+                colors: "Soft Pink, White, Gold"
+            },
+            {
+                img: "https://raw.githubusercontent.com/deshugraphics-dga/Deshu-Graphics-Kandy/main/image%202/thank%20you%20card.jpg",
+                cat: "Thank You Card",
+                title: "Wedding Thank You Card",
+                desc: "Beautiful digital wedding thank you card for Dileepa & Maleesha with eucalyptus greenery, paper tear textures, and washi tape accents. Features dual couple photography, wedding date, venue details at The Golden Crown Hotel, and heartfelt guest appreciation message.",
+                rate: "97%",
+                colors: "Sage Green, White, Neutral Grey"
+            }
+        ];
+
+        const skills = [
+            { name: "Adobe Photoshop", pct: 92, icon: "fa-image" },
+            { name: "Adobe Illustrator", pct: 60, icon: "fa-pen-nib" },
+            { name: "CorelDRAW", pct: 87, icon: "fa-vector-square" },
+            { name: "Font Selection", pct: 65, icon: "fa-font" },
+            { name: "Color Palettes", pct: 82, icon: "fa-palette" },
+            { name: "Content & Ideas", pct: 94, icon: "fa-lightbulb" },
+            { name: "Client Understanding", pct: 99, icon: "fa-handshake" },
+            { name: "Target Analysis", pct: 80, icon: "fa-bullseye" }
+        ];
+
+        // ===== RENDER WORKS =====
+        const wg = document.getElementById('workGrid');
+        works.forEach((w, i) => {
+            const div = document.createElement('div');
+            div.className = 'work-item fade-up';
+            div.innerHTML = `
+                <img src="${w.img}" alt="${w.title}" loading="lazy">
+                <div class="work-overlay">
+                    <div class="work-cat">${w.cat}</div>
+                    <div class="work-title">${w.title}</div>
+                    <div class="work-desc">${w.desc}</div>
+                    <div class="work-meta">
+                        <span><i class="fas fa-check-circle"></i> ${w.rate}</span>
+                        <span><i class="fas fa-palette"></i> ${w.colors.split(',')[0]}</span>
+                    </div>
+                </div>
+            `;
+            div.onclick = () => openLightbox(i);
+            wg.appendChild(div);
+        });
+
+        // ===== RENDER SKILLS =====
+        const sg = document.getElementById('skillsGrid');
+        skills.forEach(s => {
+            const cls = s.pct >= 90 ? 'high' : s.pct >= 70 ? 'mid' : 'low';
+            const div = document.createElement('div');
+            div.className = 'skill-row fade-up';
+            div.innerHTML = `
+                <div class="skill-info">
+                    <div class="skill-icon"><i class="fas ${s.icon}"></i></div>
+                    <div class="skill-name">${s.name}</div>
+                </div>
+                <div class="skill-track">
+                    <div class="skill-fill" data-w="${s.pct}%"></div>
+                </div>
+                <div class="skill-pct ${cls}">${s.pct}%</div>
+            `;
+            sg.appendChild(div);
+        });
+
+        // ===== LIGHTBOX =====
+        function openLightbox(i) {
+            const w = works[i];
+            document.getElementById('lbImg').src = w.img;
+            document.getElementById('lbCat').textContent = w.cat;
+            document.getElementById('lbTitle').textContent = w.title;
+            document.getElementById('lbDesc').textContent = w.desc;
+            document.getElementById('lbRate').textContent = w.rate;
+            document.getElementById('lbColors').textContent = w.colors;
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        document.getElementById('lightboxClose').onclick = closeLightbox;
+        document.getElementById('lightbox').onclick = (e) => { if(e.target.id === 'lightbox') closeLightbox(); };
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // ===== SCROLL ANIMATIONS =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Animate skill bars
+                    entry.target.querySelectorAll('.skill-fill').forEach(f => {
+                        f.style.width = f.getAttribute('data-w');
+                    });
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+        // ===== CURSOR GLOW =====
+        const cg = document.getElementById('cursorGlow');
+        document.addEventListener('mousemove', (e) => {
+            cg.style.left = e.clientX + 'px';
+            cg.style.top = e.clientY + 'px';
+        });
+
+        // ===== NAV SCROLL =====
+        const nav = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(6,6,6,0.95)';
+                nav.style.backdropFilter = 'blur(20px)';
+            } else {
+                nav.style.background = 'linear-gradient(to bottom, rgba(6,6,6,0.95), transparent)';
+            }
+        });
+
+        // ===== MOBILE MENU =====
+        const ham = document.getElementById('hamburger');
+        const nl = document.getElementById('navLinks');
+        ham.onclick = () => nl.classList.toggle('active');
+        document.querySelectorAll('.nav-links a').forEach(a => a.onclick = () => nl.classList.remove('active'));
+
+        // ===== ORDER FORM =====
+        document.getElementById('orderForm').onsubmit = function(e) {
+            e.preventDefault();
+            const n = document.getElementById('cName').value;
+            const co = document.getElementById('cCompany').value;
+            const t = document.getElementById('cType').value;
+            const em = document.getElementById('cEmail').value;
+            const cat = document.getElementById('cCategory').value;
+            const idea = document.getElementById('cIdea').value || 'Not specified';
+
+            const msg = `*New Design Order - Deshu Graphics*%0A%0A` +
+                       `*Name:* ${n}%0A` +
+                       `*Company:* ${co}%0A` +
+                       `*Business Type:* ${t}%0A` +
+                       `*Email:* ${em}%0A` +
+                       `*Category:* ${cat}%0A` +
+                       `*Design Idea:* ${idea}%0A%0A` +
+                       `_Sent from Deshu Graphics Portfolio_`;
+
+            const notif = document.getElementById('notification');
+            notif.classList.add('show');
+            setTimeout(() => {
+                notif.classList.remove('show');
+                window.open(`https://wa.me/94741895740?text=${msg}`, '_blank');
+            }, 2500);
+            this.reset();
+        };
+
+        // ===== SMOOTH SCROLL =====
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.onclick = function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            };
+        });
+    </script>
+</body>
+</html>
